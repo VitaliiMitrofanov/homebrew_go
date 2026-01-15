@@ -36,7 +36,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		"-p", "all",
 		"-f", "JSON",
 		"-t",
-		tmpFile.Name()
+		tmpFile.Name(),
 	)
 	out, err := cmd.Output()
 	if err != nil {
