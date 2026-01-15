@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -23,6 +24,26 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		return fmt.Errorf("failed to write PDF data: %w", err)
 	}
 	tmpFile.Close()
+
+	tabulaPath := os.Getenv("TABULA_JAR_PATH")
+	if tabulaPath == "" {
+		tabulaPath = "tools/tabula/tabula.jar"
+	}
+	fmt.Printf("Tabula path: %s", tabulaPath)
+
+	cmd := exec.Command(
+		"java", "-jar", tabulaPath,
+		"-p", "all",
+		"-f", "JSON",
+		"-t",
+		tmpFile.Name()
+	)
+	out, err := cmd.Output()
+	if err != nil {
+		return fmt.Errorf("failed to extract PDF: %w", err)
+	}
+
+	/*
 
 	// Open PDF using gxpdf
 	doc, err := gxpdf.Open(tmpFile.Name())
@@ -50,22 +71,12 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		return fmt.Errorf("failed to save transactions: %w", err)
 	}
 
+	*/
+
 	return nil
 }
 
-// extractTextFromPDF extracts text from PDF document
-// This is a fallback method if table extraction doesn't work
-func extractTextFromPDF(doc *gxpdf.Document) string {
-	// Note: gxpdf may have text extraction methods
-	// Adjust based on actual gxpdf API
-	var text strings.Builder
-
-	// Try to get text content if available
-	// This is a placeholder - adjust based on actual gxpdf API
-	// You may need to iterate through pages or use other methods
-
-	return text.String()
-}
+/*
 
 // parseTable parses a table row and extracts transaction data
 func parseTable(bankName string, row [][]string) []Transaction {
@@ -125,68 +136,4 @@ func parseSberbank(rows [][]string) []Transaction {
 	}
 	return transactions
 }
-
-/*
-	var transactions []Transaction
-
-	// Sberbank format example: DD.MM.YYYY Description Amount Balance
-	// This is a simplified parser - adjust based on actual PDF format
-	lines := strings.Split(text, "\n")
-
-	datePattern := regexp.MustCompile(`(\d{2}\.\d{2}\.\d{4})`)
-	amountPattern := regexp.MustCompile(`(-?\d+[\.,]\d{2})`)
-
-		for _, line := range lines {
-
-
-				line = strings.TrimSpace(line)
-				if len(line) < 10 {
-					continue
-				}
-
-				dateMatch := datePattern.FindStringSubmatch(line)
-				if len(dateMatch) == 0 {
-					continue
-				}
-
-				amountMatches := amountPattern.FindAllString(line, -1)
-				if len(amountMatches) < 2 {
-					continue
-				}
-
-				date, err := time.Parse("02.01.2006", dateMatch[1])
-				if err != nil {
-					continue
-				}
-
-				amountStr := strings.ReplaceAll(amountMatches[len(amountMatches)-2], ",", ".")
-				balanceStr := strings.ReplaceAll(amountMatches[len(amountMatches)-1], ",", ".")
-
-				amount, err := strconv.ParseFloat(amountStr, 64)
-				if err != nil {
-					continue
-				}
-
-				balance, err := strconv.ParseFloat(balanceStr, 64)
-				if err != nil {
-					continue
-				}
-
-				// Extract description (between date and first amount)
-				descStart := strings.Index(line, dateMatch[1]) + len(dateMatch[1])
-				descEnd := strings.Index(line, amountMatches[len(amountMatches)-2])
-				description := ""
-				if descEnd > descStart {
-					description = strings.TrimSpace(line[descStart:descEnd])
-				}
-
-			transactions = append(transactions, Transaction{
-				Date:        date,
-				Description: description,
-				Amount:      amount,
-				Balance:     balance,
-			})
-		}
-
-		return transactions
 */
