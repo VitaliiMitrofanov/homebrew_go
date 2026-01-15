@@ -8,6 +8,7 @@ import (
 	"time"
 	"encoding/csv"
 	"io"
+	"bytes"
 
 )
 
@@ -44,7 +45,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		return fmt.Errorf("failed to extract PDF: %w", err)
 	}
 
-	r := csv.NewReader(out)
+	r := csv.NewReader(bytes.NewReader(out))
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
