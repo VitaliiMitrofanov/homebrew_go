@@ -5,6 +5,13 @@ import (
 	"log"
 )
 
+type Transaction struct {
+		Date        time.Time
+		Description string
+		Amount      string
+		Balance     string
+}
+
 func saveTransactions(userID int64, bankName string, transactions []Transaction) error {
 	if len(transactions) == 0 {
 		return fmt.Errorf("no transactions to save")
