@@ -54,7 +54,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		if err != nil {
 			fmt.Errorf("failed to read CSV: %w", err)
 		}
-		fmt.Println(record)
+		fmt.Printf("C: %d: %#v\n", record.ColumnCount, record)
 	}
 
 	/*
