@@ -73,6 +73,13 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 
 	*/
 
+	type Transaction struct {
+		Date        time.Time
+		Description string
+		Amount      string
+		Balance     string
+	}
+
 	return nil
 }
 
