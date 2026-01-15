@@ -37,7 +37,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 		"java", "-jar", tabulaPath,
 		"-p", "all",
 		"-f", "CSV",
-		"-t",
+		"-t", "-g",
 		tmpFile.Name(),
 	)
 	out, err := cmd.Output()
