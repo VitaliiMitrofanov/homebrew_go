@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
-	"time"
+	//"strings"
+	//"time"
 
-	"github.com/coregx/gxpdf"
 )
 
 func processPDF(userID int64, bankName string, pdfData []byte) error {
@@ -34,7 +33,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 	cmd := exec.Command(
 		"java", "-jar", tabulaPath,
 		"-p", "all",
-		"-f", "JSON",
+		"-f", "CSV",
 		"-t",
 		tmpFile.Name(),
 	)
@@ -42,6 +41,7 @@ func processPDF(userID int64, bankName string, pdfData []byte) error {
 	if err != nil {
 		return fmt.Errorf("failed to extract PDF: %w", err)
 	}
+	fmt.Printf("%#v\n", out)
 
 	/*
 
